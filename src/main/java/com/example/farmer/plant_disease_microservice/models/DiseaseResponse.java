@@ -1,4 +1,4 @@
-package com.example.plant_disease_microservice.models;
+package com.example.farmer.plant_disease_microservice.models;
 
 
 public class DiseaseResponse {

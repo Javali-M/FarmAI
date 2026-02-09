@@ -1,13 +1,13 @@
-package com.example.plant_disease_microservice;
+package com.example.farmer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PlantDiseaseMicroserviceApplication {
+public class FarmerMicroserviceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlantDiseaseMicroserviceApplication.class, args);
+		SpringApplication.run(FarmerMicroserviceApplication.class, args);
 	}
 
 }

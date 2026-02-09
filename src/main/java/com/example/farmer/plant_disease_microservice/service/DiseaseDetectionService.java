@@ -1,4 +1,4 @@
-package com.example.plant_disease_microservice.service;
+package com.example.farmer.plant_disease_microservice.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -7,11 +7,13 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.example.farmer.plant_disease_microservice.models.DiseaseResponse;
+import com.example.farmer.plant_disease_microservice.models.PlantNetApiResponse;
+
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import com.example.plant_disease_microservice.models.DiseaseResponse;
-import com.example.plant_disease_microservice.models.PlantNetApiResponse;
 
 @Service
 public class DiseaseDetectionService {

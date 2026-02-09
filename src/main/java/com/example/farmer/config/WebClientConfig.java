@@ -1,4 +1,4 @@
-package com.example.plant_disease_microservice.config;
+package com.example.farmer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
