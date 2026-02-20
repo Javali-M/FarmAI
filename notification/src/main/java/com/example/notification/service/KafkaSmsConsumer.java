@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KafkaSmsConsumer {
 
-    private TwilioClientService twilioClientService;
+    private final TwilioClientService twilioClientService;
 
     @KafkaListener(topics = "sms-topic", groupId = "sms-group")
     public void consume(SmsRequest smsRequest) {
