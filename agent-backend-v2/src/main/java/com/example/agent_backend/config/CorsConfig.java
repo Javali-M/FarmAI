@@ -15,9 +15,9 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                            "https://main.d1rplfr9viduip.amplifyapp.com",
-                            "http://localhost:3000"
-                        )
+                                "https://main.d1rplfr9viduip.amplifyapp.com",
+                                "http://localhost:3000",
+                                "https://centers-donation-statistics-rouge.trycloudflare.com")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .maxAge(3600);
