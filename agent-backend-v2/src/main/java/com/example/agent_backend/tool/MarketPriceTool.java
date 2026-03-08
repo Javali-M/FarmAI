@@ -1,15 +1,17 @@
 package com.example.agent_backend.tool;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,8 @@ public class MarketPriceTool {
     private static final String PATH = "/resource/35985678-0d79-46b4-9ed6-6f13308a1d24";
 
     public Mono<String> getBestMarket(String commodity, String district) {
+
+        System.out.println("Fetching market price for commodity: " + commodity + ", district: " + district);
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -41,6 +45,8 @@ public class MarketPriceTool {
                 .map(json -> {
                     JsonNode records = json.path("records");
 
+                    System.out.println("Received market price data: " + records.toString());
+
                     if (records.isEmpty()) {
                         return "No market data found for %s in %s district.".formatted(commodity, district);
                     }
@@ -50,16 +56,16 @@ public class MarketPriceTool {
 
                     
                     markets.sort(Comparator.comparingDouble(
-                            n -> -parsePrice(n.path("modal_price").asText("0"))
+                            n -> -parsePrice(n.path("Modal_Price").asText("0"))
                     ));
 
                     JsonNode best = markets.get(0);
-                    String marketName  = best.path("market").asText("N/A");
-                    String state       = best.path("state").asText("N/A");
-                    String minPrice    = best.path("min_price").asText("N/A");
-                    String maxPrice    = best.path("max_price").asText("N/A");
-                    String modalPrice  = best.path("modal_price").asText("N/A");
-                    String arrivalDate = best.path("arrival_date").asText("N/A");
+                    String marketName  = best.path("Market").asText("N/A");
+                    String state       = best.path("State").asText("N/A");
+                    String minPrice    = best.path("Min_Price").asText("N/A");
+                    String maxPrice    = best.path("Max_Price").asText("N/A");
+                    String modalPrice  = best.path("Modal_Price").asText("N/A");
+                    String arrivalDate = best.path("Arrival_Date").asText("N/A");
 
                     // top 3 alternatives for context
                     StringBuilder sb = new StringBuilder();
@@ -70,8 +76,8 @@ public class MarketPriceTool {
                         sb.append("Other nearby options: ");
                         markets.stream().skip(1).limit(2).forEach(m ->
                                 sb.append("%s at ₹%s modal, ".formatted(
-                                        m.path("market").asText("N/A"),
-                                        m.path("modal_price").asText("N/A")))
+                                        m.path("Market").asText("N/A"),
+                                        m.path("Modal_Price").asText("N/A")))
                         );
                     }
 
