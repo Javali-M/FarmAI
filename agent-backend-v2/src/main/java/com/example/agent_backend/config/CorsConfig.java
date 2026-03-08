@@ -14,9 +14,13 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://main.d1rplfr9viduip.amplifyapp.com/")
-                        .allowedMethods("*")
-                        .allowedHeaders("*");
+                        .allowedOrigins(
+                            "https://main.d1rplfr9viduip.amplifyapp.com"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(false)
+                        .maxAge(3600);
             }
         };
     }
