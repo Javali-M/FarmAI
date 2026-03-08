@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: agent-backend
+  ai:
+    bedrock:
+      aws:
+        region: ap-south-1
+      converse:
+        chat:
+          options:
+            # Use the full ARN here
+            model: "arn:aws:bedrock:ap-south-1:195215829556:inference-profile/apac.amazon.nova-pro-v1:0"
+
+
+plantnet:
+  api:
+    key: 2b102Gw3oOmhe7I87c41mxTnxe
+
+datagov:
+  api:
+    key: 579b464db66ec23bdd0000017dcddee3262a4cdb60c28635afe161b7
+
+
+jwt:
+  secret: MyUltraSecureSecretKeyForJwtTokenGeneration2026AgentBackend!!
+  expiration-ms: 86400000
+
+
+server:
+  port: 8081
