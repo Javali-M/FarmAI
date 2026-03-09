@@ -1,24 +1,19 @@
 package com.example.agent_backend.tool;
 
-import org.springframework.stereotype.Component;
-
+import com.example.agent_backend.email.EmailProducer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class EmailTool {
 
+    private final EmailProducer emailProducer;
+
     public Mono<String> sendEmail(String to, String message) {
-
-        System.out.println("Got sendEmail request for to=" + to + " message=" + message);
-
-        return Mono.fromCallable(() -> {
-
-            Thread.sleep(1000);
-            return "Email sent to " + to + " with message: " + message;
-
-        }).subscribeOn(Schedulers.boundedElastic());
-
+        return Mono.fromRunnable(() -> emailProducer.sendEmailRequest(to, message))
+                .thenReturn("Email request queued successfully for: " + to)
+                .onErrorResume(e -> Mono.just("Failed to queue email: " + e.getMessage()));
     }
-
 }

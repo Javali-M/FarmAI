@@ -11,6 +11,21 @@ spring:
             # Use the full ARN here
             model: "arn:aws:bedrock:ap-south-1:195215829556:inference-profile/apac.amazon.nova-pro-v1:0"
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: email-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+ses:
+  from-email: y.abhisekhmessi535@gmail.com
 
 plantnet:
   api:
