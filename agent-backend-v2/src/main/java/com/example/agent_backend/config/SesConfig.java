@@ -12,7 +12,7 @@ public class SesConfig {
     @Bean
     public SesClient sesClient() {
         return SesClient.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.AP_SOUTH_1)
                 .build();
     }
 }
