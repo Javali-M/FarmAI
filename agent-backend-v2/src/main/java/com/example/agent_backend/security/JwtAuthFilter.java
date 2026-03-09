@@ -13,7 +13,9 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import java.util.List;
 
 @Component
@@ -25,15 +27,13 @@ public class JwtAuthFilter implements WebFilter {
     private static final List<String> PUBLIC_PATHS = List.of(
             "/auth/signup",
             "/auth/login",
-            "/auth/logout"
-    );
+            "/auth/logout");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().value();
 
-        // Skip JWT validation for public endpoints
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
@@ -41,7 +41,8 @@ public class JwtAuthFilter implements WebFilter {
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return chain.filter(exchange);
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
         }
 
         String token = authHeader.substring(7);
@@ -51,17 +52,21 @@ public class JwtAuthFilter implements WebFilter {
             return exchange.getResponse().setComplete();
         }
 
-        // Extract claims and populate RequestContext
         Claims claims = jwtUtil.extractAllClaims(token);
         String email = claims.get("email", String.class);
         Double latitude = claims.get("latitude", Double.class);
         Double longitude = claims.get("longitude", Double.class);
 
-        RequestContext.setEmail(email != null ? email : claims.getSubject());
-        RequestContext.setLatitude(latitude != null ? latitude : 0.0);
-        RequestContext.setLongitude(longitude != null ? longitude : 0.0);
+        // saving per thread for global access :)
+        RequestContext.setEmail(email);
+        RequestContext.setLatitude(latitude);
+        RequestContext.setLongitude(longitude);
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                email, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         return chain.filter(exchange)
+                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))
                 .doFinally(signalType -> RequestContext.clear());
     }
 }

@@ -32,7 +32,7 @@ public class CropDiseaseKnowledgeTool {
                 Provide cause, symptoms, treatment, and prevention for the crop disease: %s
                 """.formatted(disease);
 
-        System.out.println("searchDiseaseKnowledge query=" + query);
+        // System.out.println("searchDiseaseKnowledge query=" + query);
 
         return Mono.fromCallable(() -> {
 

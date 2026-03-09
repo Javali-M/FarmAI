@@ -25,7 +25,6 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable())
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/auth/**").permitAll()
-                        .pathMatchers("/agent/**").permitAll()
                         .pathMatchers("/users/**").permitAll()
                         .anyExchange().authenticated()
                 )

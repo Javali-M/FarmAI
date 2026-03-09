@@ -46,11 +46,9 @@ public class AuthService {
         userProfileRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail(), request.getLatitude(), request.getLongitude());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
 
         return AuthResponse.builder()
                 .token(token)
-                .refreshToken(refreshToken)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
                 .userId(userId)
@@ -69,11 +67,10 @@ public class AuthService {
                     }
 
                     String token = jwtUtil.generateToken(user.getEmail(), request.getLatitude(), request.getLongitude());
-                    String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+                  
 
                     return AuthResponse.builder()
                             .token(token)
-                            .refreshToken(refreshToken)
                             .email(user.getEmail())
                             .fullName(user.getFullName())
                             .userId(user.getUserId())

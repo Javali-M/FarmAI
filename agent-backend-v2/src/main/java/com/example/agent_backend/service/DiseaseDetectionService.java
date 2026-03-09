@@ -63,9 +63,9 @@ public class DiseaseDetectionService {
 
         PlantNetApiResponse.Result result = apiResponse.results.get(0);
 
-        System.out.println("Disease Name: " + result.name);
-        System.out.println("Description: " + result.description);
-        System.out.println("Confidence: " + result.score);
+        // System.out.println("Disease Name: " + result.name);
+        // System.out.println("Description: " + result.description);
+        // System.out.println("Confidence: " + result.score);
 
         return new DiseaseResponse(result.name, result.description, result.score);
     }

@@ -27,7 +27,11 @@ public class MarketPriceTool {
 
     public Mono<String> getBestMarket(String commodity, String district) {
 
-        System.out.println("Fetching market price for commodity: " + commodity + ", district: " + district);
+        if (commodity == null || commodity.isBlank() || district == null || district.isBlank()) {
+            return Mono.just("Commodity and district must be provided to fetch market price.");
+        }
+
+        // System.out.println("Fetching market price for commodity: " + commodity + ", district: " + district);
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -45,7 +49,7 @@ public class MarketPriceTool {
                 .map(json -> {
                     JsonNode records = json.path("records");
 
-                    System.out.println("Received market price data: " + records.toString());
+                    // System.out.println("Received market price data: " + records.toString());
 
                     if (records.isEmpty()) {
                         return "No market data found for %s in %s district.".formatted(commodity, district);
@@ -54,36 +58,35 @@ public class MarketPriceTool {
                     List<JsonNode> markets = new ArrayList<>();
                     records.forEach(markets::add);
 
-                    
                     markets.sort(Comparator.comparingDouble(
-                            n -> -parsePrice(n.path("Modal_Price").asText("0"))
-                    ));
+                            n -> -parsePrice(n.path("Modal_Price").asText("0"))));
 
                     JsonNode best = markets.get(0);
-                    String marketName  = best.path("Market").asText("N/A");
-                    String state       = best.path("State").asText("N/A");
-                    String minPrice    = best.path("Min_Price").asText("N/A");
-                    String maxPrice    = best.path("Max_Price").asText("N/A");
-                    String modalPrice  = best.path("Modal_Price").asText("N/A");
+                    String marketName = best.path("Market").asText("N/A");
+                    String state = best.path("State").asText("N/A");
+                    String minPrice = best.path("Min_Price").asText("N/A");
+                    String maxPrice = best.path("Max_Price").asText("N/A");
+                    String modalPrice = best.path("Modal_Price").asText("N/A");
                     String arrivalDate = best.path("Arrival_Date").asText("N/A");
 
                     // top 3 alternatives for context
                     StringBuilder sb = new StringBuilder();
-                    sb.append("The best market to sell %s in %s district is %s (%s). ".formatted(commodity, district, marketName, state));
-                    sb.append("As of %s, modal price is ₹%s/quintal (min: ₹%s, max: ₹%s). ".formatted(arrivalDate, modalPrice, minPrice, maxPrice));
+                    sb.append("The best market to sell %s in %s district is %s (%s). ".formatted(commodity, district,
+                            marketName, state));
+                    sb.append("As of %s, modal price is ₹%s/quintal (min: ₹%s, max: ₹%s). ".formatted(arrivalDate,
+                            modalPrice, minPrice, maxPrice));
 
                     if (markets.size() > 1) {
                         sb.append("Other nearby options: ");
-                        markets.stream().skip(1).limit(2).forEach(m ->
-                                sb.append("%s at ₹%s modal, ".formatted(
-                                        m.path("Market").asText("N/A"),
-                                        m.path("Modal_Price").asText("N/A")))
-                        );
+                        markets.stream().skip(1).limit(2).forEach(m -> sb.append("%s at ₹%s modal, ".formatted(
+                                m.path("Market").asText("N/A"),
+                                m.path("Modal_Price").asText("N/A"))));
                     }
 
                     return sb.toString().trim().replaceAll(", $", ".");
                 })
-                .onErrorReturn("Market price data for %s in %s is currently unavailable.".formatted(commodity, district));
+                .onErrorReturn(
+                        "Market price data for %s in %s is currently unavailable.".formatted(commodity, district));
     }
 
     private double parsePrice(String price) {

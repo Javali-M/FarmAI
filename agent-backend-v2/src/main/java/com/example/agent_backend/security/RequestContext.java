@@ -1,5 +1,8 @@
 package com.example.agent_backend.security;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RequestContext {
 
     private static final ThreadLocal<String> emailHolder = new ThreadLocal<>();

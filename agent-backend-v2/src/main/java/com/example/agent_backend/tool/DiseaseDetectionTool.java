@@ -18,6 +18,10 @@ public class DiseaseDetectionTool {
 
     public Mono<String> detectDisease(List<FilePart> images) {
 
+        if (images.size() > 5) {
+            return Mono.just("Too many images provided. Please provide up to 5 images of same plant.");
+        }
+
         return diseaseDetectionService.detectDisease(images)
                 .map(response -> response.toString());
     }
