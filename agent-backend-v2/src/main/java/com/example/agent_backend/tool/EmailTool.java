@@ -11,8 +11,12 @@ public class EmailTool {
 
     private final EmailProducer emailProducer;
 
-    public Mono<String> sendEmail(String to, String message) {
-        return Mono.fromRunnable(() -> emailProducer.sendEmailRequest(to, message))
+    public Mono<String> sendEmail(String to, String subject, String message) {
+        if(to == null )
+            return Mono.just("Recipient email address is required.");
+        if(message == null )
+            return Mono.just("Email message is required.");
+        return Mono.fromRunnable(() -> emailProducer.sendEmailRequest(to, subject, message))
                 .thenReturn("Email request queued successfully for: " + to)
                 .onErrorResume(e -> Mono.just("Failed to queue email: " + e.getMessage()));
     }

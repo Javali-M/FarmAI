@@ -27,6 +27,10 @@ spring:
 ses:
   from-email: y.abhisekhmessi535@gmail.com
 
+mailjet:
+  api-key: 8e7e27b08622f20cee0ab63f786bb2c0
+  secret-key: 5e17350b2fadc793c1e6fa2cf93868ad
+
 plantnet:
   api:
     key: 2b102Gw3oOmhe7I87c41mxTnxe

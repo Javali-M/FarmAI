@@ -46,8 +46,9 @@ public class ToolExecutor {
                 }
                 // fallback to user's location from JWT if not provided in args
                 if (requestContext.getLatitude() != null && requestContext.getLongitude() != null) {
-                    // System.out.println("Using location from JWT - lat: " + requestContext.getLatitude() + ", lng: "
-                    //         + requestContext.getLongitude());
+                    // System.out.println("Using location from JWT - lat: " +
+                    // requestContext.getLatitude() + ", lng: "
+                    // + requestContext.getLongitude());
                     return weatherTool.getWeather(
                             String.valueOf(requestContext.getLatitude()),
                             String.valueOf(requestContext.getLongitude()));
@@ -57,6 +58,7 @@ public class ToolExecutor {
             case "sendEmail":
                 return emailTool.sendEmail(
                         args.get("to"),
+                        args.get("subject"),
                         args.get("message"));
 
             case "detectDisease":
