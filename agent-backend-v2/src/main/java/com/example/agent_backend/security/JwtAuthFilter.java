@@ -2,8 +2,12 @@ package com.example.agent_backend.security;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -12,10 +16,7 @@ import org.springframework.web.server.WebFilterChain;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+
 import java.util.List;
 
 @Component
@@ -33,6 +34,11 @@ public class JwtAuthFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().value();
+
+        // 👇 skip OPTIONS preflight — let CORS filter handle it
+        if (HttpMethod.OPTIONS.equals(request.getMethod())) {
+            return chain.filter(exchange);
+        }
 
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
@@ -57,7 +63,6 @@ public class JwtAuthFilter implements WebFilter {
         Double latitude = claims.get("latitude", Double.class);
         Double longitude = claims.get("longitude", Double.class);
 
-        // saving per thread for global access :)
         RequestContext.setEmail(email);
         RequestContext.setLatitude(latitude);
         RequestContext.setLongitude(longitude);
