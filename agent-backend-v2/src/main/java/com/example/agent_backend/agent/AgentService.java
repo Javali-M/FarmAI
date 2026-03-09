@@ -83,10 +83,11 @@ public class AgentService {
                         param=value
                         """));
 
-        List<Message> history = chatMemoryStore.get(sessionId);
-        if (!history.isEmpty()) {
-            messages.addAll(history);
-        }
+        // List<Message> history = chatMemoryStore.get(sessionId);
+        // List<Message> history = new ArrayList<>();
+        // if (!history.isEmpty()) {
+        //     messages.addAll(history);
+        // }
 
         messages.add(new UserMessage(query));
 
