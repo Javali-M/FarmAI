@@ -4,52 +4,57 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-
-import software.amazon.awssdk.services.ses.SesClient;
-import software.amazon.awssdk.services.ses.model.Body;
-import software.amazon.awssdk.services.ses.model.Content;
-import software.amazon.awssdk.services.ses.model.Destination;
-import software.amazon.awssdk.services.ses.model.Message;
-import software.amazon.awssdk.services.ses.model.SendEmailRequest;
-import software.amazon.awssdk.services.ses.model.SendEmailResponse;
+import com.mailjet.client.ClientOptions;
+import com.mailjet.client.MailjetClient;
+import com.mailjet.client.MailjetRequest;
+import com.mailjet.client.MailjetResponse;
+import com.mailjet.client.resource.Emailv31;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Service
 @RequiredArgsConstructor
 public class EmailConsumer {
 
-    private final SesClient sesClient;
+    @Value("${mailjet.api-key}")
+    private String apiKey;
 
-    @Value("${ses.from-email}")
-    private String fromEmail;
+    @Value("${mailjet.secret-key}")
+    private String secretKey;
 
     @KafkaListener(topics = "email-requests", groupId = "email-group")
-    public void consume(EmailRequest request) {
-        System.out.println("Consumed email request for: " + request.getTo());
+    public void consume(EmailRequest emailRequest) {
+
         try {
-            SendEmailRequest sesRequest = SendEmailRequest.builder()
-                    .source(fromEmail)
-                    .destination(Destination.builder()
-                            .toAddresses(request.getTo())
-                            .build())
-                    .message(Message.builder()
-                            .subject(Content.builder()
-                                    .data("Message from FarmAI Agent")
-                                    .charset("UTF-8")
-                                    .build())
-                            .body(Body.builder()
-                                    .text(Content.builder()
-                                            .data(request.getMessage())
-                                            .charset("UTF-8")
-                                            .build())
-                                    .build())
-                            .build())
+            ClientOptions options = ClientOptions.builder()
+                    .apiKey(apiKey)
+                    .apiSecretKey(secretKey)
                     .build();
+            MailjetClient client = new MailjetClient(options);
 
-            SendEmailResponse response = sesClient.sendEmail(sesRequest);
-            System.out.println("Email sent! Message ID: " + response.messageId());
+            MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                    .property(Emailv31.MESSAGES, new JSONArray()
+                            .put(new JSONObject()
+                                    .put(Emailv31.Message.FROM,
+                                            new JSONObject()
+                                                    .put("Email", "y.abhisekhmessi535@gmail.com")
+                                                    .put("Name", "FarmAI Org"))
+                                    .put(Emailv31.Message.TO,
+                                            new JSONArray()
+                                                    .put(new JSONObject()
+                                                            .put("Email", emailRequest
+                                                                    .getTo())))
+                                    .put(Emailv31.Message.SUBJECT,
+                                            emailRequest.getSubject())
+                                    .put(Emailv31.Message.TEXTPART,
+                                            emailRequest.getMessage())));
 
+            MailjetResponse response = client.post(request);
+            System.out.println("Email sent with status: " + response.getStatus());
+        //     System.out.println("Email response: " + response.getData());
         } catch (Exception e) {
-            System.err.println("Failed to send email: " + e.getMessage());
+
+            e.printStackTrace();
         }
     }
 }

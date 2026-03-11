@@ -57,7 +57,7 @@ public class AgentService {
                         Available tools:
 
                         getWeather(latitude, longitude)
-                        sendEmail(to,message)
+                        sendEmail(to, subject, message)
                         detectDisease(images)
                         getBestMarket(commodity, district)
                         searchDiseaseKnowledge(disease)

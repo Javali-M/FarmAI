@@ -12,8 +12,8 @@ public class EmailProducer {
 
     private static final String TOPIC = "email-requests";
 
-    public void sendEmailRequest(String to, String message) {
-        EmailRequest request = new EmailRequest(to, message);
+    public void sendEmailRequest(String to, String subject, String message) {
+        EmailRequest request = new EmailRequest(to, subject, message);
         kafkaTemplate.send(TOPIC, request);
         System.out.println("Email request queued to Kafka topic: " + TOPIC);
     }
