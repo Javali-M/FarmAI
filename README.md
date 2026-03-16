@@ -7,5 +7,5 @@ This repository contains:
 - design.md: System architecture and AI design
 
 
-##n Deployed on Amplify + EC2 : https://main.d1rplfr9viduip.amplifyapp.com/
+## Deployed on Amplify + EC2 : https://main.d1rplfr9viduip.amplifyapp.com/
 
