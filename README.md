@@ -9,3 +9,6 @@ This repository contains:
 
 ## Deployed on Amplify + EC2 : https://main.d1rplfr9viduip.amplifyapp.com/
 
+### Direction | Hint:
+Start your prompt after login with - "List your capabilities". 
+Rest you are smart :)
